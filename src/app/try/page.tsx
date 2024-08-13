@@ -82,13 +82,8 @@ export default function Page() {
                   <Button size="lg">Try It Now</Button>
                   <div className="text-md text-center text-gray-600">
                     Convert{" "}
-                    <span className="bg-red-500 text-white px-1">
-                      {isEncrypted ? "plain text" : "cipher text"}
-                    </span>{" "}
-                    it to{" "}
-                    <span className="bg-blue-500 px-1 text-white">
-                      {isEncrypted ? "cipher text" : "plain text"}
-                    </span>{" "}
+                    {isEncrypted ? <PlainTextLabel /> : <CipherTextLabel />} it
+                    to {isEncrypted ? <CipherTextLabel /> : <PlainTextLabel />}{" "}
                   </div>
                 </div>
               </CardContent>
@@ -100,3 +95,11 @@ export default function Page() {
     </div>
   );
 }
+
+const CipherTextLabel = () => (
+  <span className="bg-red-500 px-1 text-white">cipher text</span>
+);
+
+const PlainTextLabel = () => (
+  <span className="bg-blue-500 px-1 text-white">plain text</span>
+);
