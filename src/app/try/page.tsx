@@ -13,6 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import { useState } from "react";
 
+const URL = "https://chaoscipherapi.soham901.me/";
+
 function Footer() {
   return (
     <footer className="p-6 w-full">
@@ -47,6 +49,7 @@ function Footer() {
 
 export default function Page() {
   const [isEncrypted, setIsEncrypted] = useState(false);
+  const [text, setText] = useState("");
 
   return (
     <div className="">
@@ -67,25 +70,55 @@ export default function Page() {
                   <CardTitle>
                     Enter your {isEncrypted ? "plain text" : "cipher text"}
                   </CardTitle>
-                  <Switch onCheckedChange={setIsEncrypted} />
+                  <Switch
+                    onCheckedChange={setIsEncrypted}
+                    checked={isEncrypted}
+                  />
                 </div>
                 <CardDescription>
                   Enter your text below to see it encrypted and decrypted.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-4">
+                <form
+                  className="grid gap-4"
+                  onSubmit={(e) => {
+                    e.preventDefault(); // Prevent the default form submission behavior
+                    console.log({ text });
+
+                    fetch(`${URL}${isEncrypted ? "decrypt" : "encrypt"}`, {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({ data: text }),
+                    })
+                      .then((res) => res.json())
+                      .then((data) => {
+                        console.log(data);
+                        setText(data.data);
+                      })
+                      .catch((err) => {
+                        console.error(err);
+                        alert("Something went wrong. Please try again later.");
+                      });
+                  }}
+                >
                   <Textarea
                     placeholder="Enter your text here..."
                     className="resize-none"
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
                   />
-                  <Button size="lg">Try It Now</Button>
+                  <Button size="lg" type="submit">
+                    Try It Now
+                  </Button>
                   <div className="text-md text-center text-gray-600">
                     Convert{" "}
                     {isEncrypted ? <PlainTextLabel /> : <CipherTextLabel />} it
-                    to {isEncrypted ? <CipherTextLabel /> : <PlainTextLabel />}{" "}
+                    to {isEncrypted ? <CipherTextLabel /> : <PlainTextLabel />}
                   </div>
-                </div>
+                </form>
               </CardContent>
             </Card>
           </div>
